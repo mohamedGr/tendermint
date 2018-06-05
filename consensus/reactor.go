@@ -1154,8 +1154,11 @@ func (ps *PeerState) ApplyNewRoundStepMessage(msg *NewRoundStepMessage) {
 	ps.mtx.Lock()
 	defer ps.mtx.Unlock()
 
+	ps.logger.Info("APPLY NEW ROUND STATE", "msg", msg, "ps", ps)
+
 	// Ignore duplicates or decreases
 	if CompareHRS(msg.Height, msg.Round, msg.Step, ps.PRS.Height, ps.PRS.Round, ps.PRS.Step) <= 0 {
+		ps.logger.Info("IGNORING NEWROUNDSTATE")
 		return
 	}
 
@@ -1201,6 +1204,8 @@ func (ps *PeerState) ApplyNewRoundStepMessage(msg *NewRoundStepMessage) {
 		ps.PRS.CatchupCommitRound = -1
 		ps.PRS.CatchupCommit = nil
 	}
+
+	ps.logger.Info("Updated peer roundstate:", "ps", ps)
 }
 
 // ApplyCommitStepMessage updates the peer state for the new commit.
